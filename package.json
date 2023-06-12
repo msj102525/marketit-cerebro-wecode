@@ -2,7 +2,7 @@
   "name": "cerebro-wecode-api",
   "version": "0.0.1",
   "engines": {
-    "node": "18.16.0"
+    "node": "18.15.11"
   },
   "description": "",
   "author": "",
