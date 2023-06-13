@@ -12,6 +12,7 @@ import { TeamsService } from '../services/teams.service';
 import { CreateTeamDto } from '../dtos/create.team.dto';
 import { UpdateTeamDto } from '../dtos/update.team.dto';
 import { ApiResponse } from 'src/common/response/api.response';
+import { statusMessage } from '../../common/response/status.message.enum';
 
 @Controller('teams')
 export class TeamsController {
@@ -20,7 +21,7 @@ export class TeamsController {
   @Post()
   create(@Body() createTeamDto: CreateTeamDto) {
     const team = this.teamsService.create(createTeamDto);
-    return new ApiResponse(HttpStatus.CREATED, team);
+    return new ApiResponse(statusMessage.s, HttpStatus.CREATED, team);
   }
 
   @Get()

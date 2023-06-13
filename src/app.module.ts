@@ -5,10 +5,32 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { TeamsModule } from './teams/teams.module';
 import { databaseConfig } from 'ormconfig/database.config';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/services/auth/auth.service';
+import { UsersService } from './users/services/users.service';
+import { User } from './users/entities/user.entity';
+import { UsersController } from './users/controllers/users.controller';
+import { AuthController } from './auth/controllers/auth/auth.controller';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), UsersModule, TeamsModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(databaseConfig),
+    TypeOrmModule.forFeature([User]),
+    UsersModule,
+    TeamsModule,
+    AuthModule,
+  ],
+  controllers: [AppController, UsersController, AuthController],
+  providers: [
+    AppService,
+    {
+      provide: 'AUTH_SERVICE',
+      useClass: AuthService,
+    },
+    {
+      provide: 'USER_SERVICE',
+      useClass: UsersService,
+    },
+  ],
 })
 export class AppModule {}
