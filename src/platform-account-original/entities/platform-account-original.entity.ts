@@ -14,7 +14,12 @@ export class PlatformAccountOriginal extends CommonEntity {
   @Column({ type: 'varchar', length: 50, nullable: false })
   username: string;
 
-  @Column({ name: 'display_name', length: 50, type: 'varchar', nullable: true })
+  @Column({
+    name: 'display_name',
+    length: 255,
+    type: 'varchar',
+    nullable: true,
+  })
   displayName: string;
 
   @Column({ type: 'text', nullable: true })
