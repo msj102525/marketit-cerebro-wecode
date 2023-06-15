@@ -1,15 +1,12 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Equal, FindOneOptions, Repository } from 'typeorm';
 import { Tag } from './entities/tags.entity';
 import { TagType } from './entities/tagTypes.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { CreateTagTypeDto } from './dto/create-tag_type.dto';
+import { UpdateTagTypeDto } from './dto/update-tag_type.dto';
 import {
   NotFound,
   NotFoundMessage,
@@ -79,5 +76,86 @@ export class TagsService {
     }
 
     await this.tagrepo.delete(tagId);
+  }
+
+  async isExistTagTypeById(option: FindOneOptions<TagType>): Promise<TagType> {
+    const tagTypeFindById = await this.tagtyperepo.findOne(option);
+
+    if (!tagTypeFindById) {
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+    }
+
+    return tagTypeFindById;
+  }
+
+  async isExistTagTypeByCreatedDto(
+    createTagTypeDto: CreateTagTypeDto,
+  ): Promise<TagType> {
+    const { tagType, tagState } = createTagTypeDto;
+
+    const tagTypeFind: TagType | undefined = await this.tagtyperepo.findOne({
+      relations: ['tagState'],
+      where: {
+        tagState: Equal(tagState),
+        tagType: tagType,
+      },
+    });
+
+    return tagTypeFind;
+  }
+
+  async createTagType(createTagTypeDto: CreateTagTypeDto): Promise<TagType> {
+    const tagTypeFind = await this.isExistTagTypeByCreatedDto(createTagTypeDto);
+
+    if (tagTypeFind) {
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+    }
+
+    await this.tagtyperepo.save({
+      tagType: createTagTypeDto.tagType,
+      tagState: { id: createTagTypeDto.tagState },
+    });
+
+    const tagTypeResult = await this.isExistTagTypeByCreatedDto(
+      createTagTypeDto,
+    );
+
+    return tagTypeResult;
+  }
+
+  async findAllTagTpyesByStatus(status: number): Promise<TagType[]> {
+    console.log(status);
+    const tagTypesArray = await this.tagtyperepo.find({
+      relations: ['tagState'],
+      where: { tagState: Equal(status) },
+    });
+
+    if (tagTypesArray.length < 1) {
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+    }
+
+    return tagTypesArray;
+  }
+
+  async updateTagType(
+    id: number,
+    updateTagTypeDto: UpdateTagTypeDto,
+  ): Promise<TagType> {
+    const tagTypeFindById = await this.isExistTagTypeById({
+      relations: ['tagState'],
+      where: { id },
+    });
+
+    Object.assign(tagTypeFindById, updateTagTypeDto);
+
+    return await this.tagtyperepo.save(tagTypeFindById);
+  }
+
+  async removeTagType(id: number): Promise<string> {
+    const tagTypeFindById = await this.isExistTagTypeById({ where: { id } });
+
+    await this.tagtyperepo.remove(tagTypeFindById);
+
+    return `This action removes a tagTypeId: ${id}`;
   }
 }

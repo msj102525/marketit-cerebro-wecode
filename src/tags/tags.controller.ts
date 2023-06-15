@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { ApiResponse } from 'src/common/response/api.response';
 import { statusMessage } from 'src/common/response/status.message.enum';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { CreateTagTypeDto } from './dto/create-tag_type.dto';
+import { UpdateTagTypeDto } from './dto/update-tag_type.dto';
 
 @Controller('tag')
 export class TagsController {
@@ -46,5 +49,42 @@ export class TagsController {
   async deleteTag(@Param('id') tagId: number) {
     const result = await this.tagsService.deleteTag(tagId);
     return new ApiResponse(statusMessage.s, HttpStatus.OK, result);
+  }
+
+  @Post('/type')
+  async createTagType(@Body() createTagTypeDto: CreateTagTypeDto) {
+    const createTagType = await this.tagsService.createTagType(
+      createTagTypeDto,
+    );
+    return new ApiResponse(statusMessage.s, HttpStatus.CREATED, createTagType);
+  }
+
+  @Get('/type/all')
+  async findAllTagTypesByStatus(@Query('status') status: number) {
+    console.log(status);
+    const tagTypes = await this.tagsService.findAllTagTpyesByStatus(status);
+    return new ApiResponse(statusMessage.s, HttpStatus.OK, tagTypes);
+  }
+
+  @Patch('/type/:id')
+  async updateTagType(
+    @Param('id') id: number,
+    @Body() updateTagTypeDto: UpdateTagTypeDto,
+  ) {
+    const updateTagType = await this.tagsService.updateTagType(
+      id,
+      updateTagTypeDto,
+    );
+    return new ApiResponse(statusMessage.s, HttpStatus.OK, updateTagType);
+  }
+
+  @Delete('/type/:id')
+  async removeTagType(@Param('id') id: number) {
+    const deleteTagType = await this.tagsService.removeTagType(id);
+    return new ApiResponse(
+      statusMessage.s,
+      HttpStatus.NO_CONTENT,
+      deleteTagType,
+    );
   }
 }
