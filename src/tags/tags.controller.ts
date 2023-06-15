@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
+  Req,
   Query,
 } from '@nestjs/common';
 import { TagsService } from './tags.service';
@@ -16,6 +18,9 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { CreateTagTypeDto } from './dto/create-tag_type.dto';
 import { UpdateTagTypeDto } from './dto/update-tag_type.dto';
+import { JwtAuthGuard } from 'src/auth/utils/jwt.guard';
+import { Request } from 'express';
+import { Payload } from 'src/auth/utils/jwtPayload';
 
 @Controller('tag')
 export class TagsController {
@@ -51,8 +56,16 @@ export class TagsController {
     return new ApiResponse(statusMessage.s, HttpStatus.OK, result);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/type')
-  async createTagType(@Body() createTagTypeDto: CreateTagTypeDto) {
+  async createTagType(
+    @Body() createTagTypeDto: CreateTagTypeDto,
+    @Req() req: Request,
+  ) {
+    const user: Payload = req.user as Payload;
+
+    createTagTypeDto.userId = user.id;
+
     const createTagType = await this.tagsService.createTagType(
       createTagTypeDto,
     );
@@ -61,7 +74,6 @@ export class TagsController {
 
   @Get('/type/all')
   async findAllTagTypesByStatus(@Query('status') status: number) {
-    console.log(status);
     const tagTypes = await this.tagsService.findAllTagTpyesByStatus(status);
     return new ApiResponse(statusMessage.s, HttpStatus.OK, tagTypes);
   }

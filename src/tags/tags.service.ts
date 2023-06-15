@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, FindOneOptions, Repository } from 'typeorm';
 import { Tag } from './entities/tags.entity';
@@ -11,6 +16,7 @@ import {
   NotFound,
   NotFoundMessage,
 } from 'src/common/exception/not.found.exception';
+import { Exist, ExistMessage } from 'src/common/exception/exsist.exception';
 
 @Injectable()
 export class TagsService {
@@ -91,13 +97,14 @@ export class TagsService {
   async isExistTagTypeByCreatedDto(
     createTagTypeDto: CreateTagTypeDto,
   ): Promise<TagType> {
-    const { tagType, tagState } = createTagTypeDto;
+    const { tagType, tagState, userId } = createTagTypeDto;
 
     const tagTypeFind: TagType | undefined = await this.tagtyperepo.findOne({
       relations: ['tagState'],
       where: {
         tagState: Equal(tagState),
         tagType: tagType,
+        userId: userId,
       },
     });
 
@@ -108,12 +115,13 @@ export class TagsService {
     const tagTypeFind = await this.isExistTagTypeByCreatedDto(createTagTypeDto);
 
     if (tagTypeFind) {
-      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+      throw new Exist(ExistMessage.ALREADY_EXIST);
     }
 
     await this.tagtyperepo.save({
       tagType: createTagTypeDto.tagType,
       tagState: { id: createTagTypeDto.tagState },
+      userId: createTagTypeDto.userId,
     });
 
     const tagTypeResult = await this.isExistTagTypeByCreatedDto(
@@ -124,7 +132,6 @@ export class TagsService {
   }
 
   async findAllTagTpyesByStatus(status: number): Promise<TagType[]> {
-    console.log(status);
     const tagTypesArray = await this.tagtyperepo.find({
       relations: ['tagState'],
       where: { tagState: Equal(status) },
