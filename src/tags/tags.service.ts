@@ -1,10 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityNotFoundError, Repository } from 'typeorm';
 import { Tag } from './entities/tags.entity';
 import { TagType } from './entities/tagTypes.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import {
+  NotFound,
+  NotFoundMessage,
+} from 'src/common/exception/not.found.exception';
 
 @Injectable()
 export class TagsService {
@@ -38,10 +47,7 @@ export class TagsService {
     });
 
     if (!tag) {
-      throw new HttpException(
-        `Tag with id: ${tagId} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG);
     }
 
     return tag;
@@ -53,7 +59,7 @@ export class TagsService {
     });
 
     if (!updateTagType) {
-      throw new HttpException(`tag type not found`, HttpStatus.NOT_FOUND);
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
     }
 
     await this.tagrepo.update(
@@ -69,10 +75,7 @@ export class TagsService {
     const tag: Tag = await this.tagrepo.findOneBy({ tagId });
 
     if (!tag) {
-      throw new HttpException(
-        `Tag with id: ${tagId} not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG);
     }
 
     await this.tagrepo.delete(tagId);

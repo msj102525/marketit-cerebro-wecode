@@ -15,7 +15,7 @@ export class Tag {
   @Column({ name: 'tag_name' })
   tagName: string;
 
-  @ManyToOne(() => TagType, (tagType) => tagType.tag, { onDelete: 'CASCADE' })
+  @ManyToOne(() => TagType, (tagType) => tagType.tag)
   @JoinColumn({ name: 'tag_type_id' })
   tagType: TagType;
 }

@@ -10,8 +10,6 @@ export class TagState {
   @Column({ name: 'tag_state' })
   tagState: string;
 
-  @OneToMany(() => TagType, (tagType) => tagType.tagState, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => TagType, (tagType) => tagType.tagState)
   tagType: TagType[];
 }
