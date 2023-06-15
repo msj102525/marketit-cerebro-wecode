@@ -12,6 +12,7 @@ import { User } from './users/entities/user.entity';
 import { UsersController } from './users/controllers/users.controller';
 import { AuthController } from './auth/controllers/auth/auth.controller';
 import { TagsModule } from './tags/tags.module';
+import { MemosModule } from './memos/memos.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TagsModule } from './tags/tags.module';
     TeamsModule,
     AuthModule,
     TagsModule,
+    MemosModule,
   ],
   controllers: [AppController, UsersController, AuthController],
   providers: [
