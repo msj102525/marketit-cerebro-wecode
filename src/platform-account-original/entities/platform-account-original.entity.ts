@@ -14,7 +14,12 @@ export class PlatformAccountOriginal extends CommonEntity {
   @Column({ type: 'varchar', length: 50, nullable: false })
   username: string;
 
-  @Column({ name: 'display_name', length: 50, type: 'varchar', nullable: true })
+  @Column({
+    name: 'display_name',
+    length: 255,
+    type: 'varchar',
+    nullable: true,
+  })
   displayName: string;
 
   @Column({ type: 'text', nullable: true })
@@ -25,6 +30,15 @@ export class PlatformAccountOriginal extends CommonEntity {
 
   @Column({ type: 'int', nullable: true })
   following: number;
+
+  @Column({
+    name: 'engagement_rate',
+    type: 'decimal',
+    precision: 10,
+    scale: 3,
+    nullable: true,
+  })
+  engagementRate: number;
 
   @Column({ name: 'is_verified', nullable: true })
   isVerified: boolean;
@@ -94,8 +108,8 @@ export class PlatformAccountOriginal extends CommonEntity {
   })
   detailedAddress: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  zip: string;
+  @Column({ name: 'zip_code', type: 'varchar', length: 50, nullable: true })
+  zipCode: string;
 
   @Column({ type: 'double', nullable: true })
   latitude: number;
