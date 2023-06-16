@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTagDto {
   @IsNotEmpty()
@@ -6,6 +6,6 @@ export class CreateTagDto {
   readonly tagName: string;
 
   @IsNotEmpty()
-  @IsString()
-  readonly tagType: string;
+  @IsNumber()
+  readonly tagTypeId: number;
 }
