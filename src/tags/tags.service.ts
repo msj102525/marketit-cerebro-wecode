@@ -144,8 +144,11 @@ export class TagsService {
 
   async findAllTagTpyesByStatus(status: number): Promise<TagType[]> {
     const tagTypesArray = await this.tagtyperepo.find({
-      relations: ['tagState'],
       where: { tagState: Equal(status) },
+      relations: ['tagState', 'tag.tagType'],
+      order: {
+        tag: { tagId: 'ASC' },
+      },
     });
 
     if (tagTypesArray.length < 1) {
