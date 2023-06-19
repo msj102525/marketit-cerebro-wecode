@@ -8,6 +8,9 @@ export class TagType extends CommonEntity {
   @Column({ name: 'tag_type' })
   tagType: string;
 
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @OneToMany(() => Tag, (tag) => tag.tagType)
   tag: Tag[];
 

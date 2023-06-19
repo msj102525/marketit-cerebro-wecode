@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateTagTypeDto {
   @IsNotEmpty()
@@ -7,8 +7,11 @@ export class CreateTagTypeDto {
   @IsNotEmpty()
   tagState: number;
 
-  constructor(tagType: string, tagState: number) {
+  userId: number;
+
+  constructor(tagType: string, tagState: number, userId: number) {
     this.tagType = tagType;
     this.tagState = tagState;
+    this.userId = userId;
   }
 }
