@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { CreateUserDto } from '../../../users/dtos/create.user.dto';
 import { LoginUserDto } from '../../dtos/login.user.dto';
 import { ApiResponse } from '../../../common/response/api.response';
-import { SerializedUser } from '../../../common/serializers/seralized.user';
+import { SerializedUser } from '../../../common/serializers/serialized.user';
 
 @Controller('auth')
 export class AuthController {
