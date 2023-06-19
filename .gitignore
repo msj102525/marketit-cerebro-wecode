@@ -3,7 +3,6 @@
 /node_modules
 .env
 /src/auth/utils/jwtConstants.ts
-/migrations
 
 # Logs
 logs
