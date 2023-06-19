@@ -1,5 +1,5 @@
-import { CommonEntity } from 'src/common/entity/common.entity';
 import { Column, Entity } from 'typeorm';
+import { CommonEntity } from './common.entity';
 
 @Entity()
 export class PlatformAccountOriginal extends CommonEntity {

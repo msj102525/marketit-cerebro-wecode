@@ -12,19 +12,27 @@ import { User } from './users/entities/user.entity';
 import { UsersController } from './users/controllers/users.controller';
 import { AuthController } from './auth/controllers/auth/auth.controller';
 import { TagsModule } from './tags/tags.module';
+import { PlatformAccount } from './platform-account/entities/platform.account.entity';
+import { PlatformAccountController } from './platform-account/controllers/platform.account.controller';
+import { PlatformAccountService } from './platform-account/services/platform.account.service';
 import { MemosModule } from './memos/memos.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(databaseConfig),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, PlatformAccount]),
     UsersModule,
     TeamsModule,
     AuthModule,
     TagsModule,
     MemosModule,
   ],
-  controllers: [AppController, UsersController, AuthController],
+  controllers: [
+    AppController,
+    UsersController,
+    AuthController,
+    PlatformAccountController,
+  ],
   providers: [
     AppService,
     {
@@ -34,6 +42,10 @@ import { MemosModule } from './memos/memos.module';
     {
       provide: 'USER_SERVICE',
       useClass: UsersService,
+    },
+    {
+      provide: 'PLATFORMACCOUNT_SERVICE',
+      useClass: PlatformAccountService,
     },
   ],
 })
