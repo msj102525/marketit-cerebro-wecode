@@ -1,5 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CommonEntity } from 'src/common/entity/common.entity';
 import { TagType } from './tagTypes.entity';
 
 @Entity('tag_state')
