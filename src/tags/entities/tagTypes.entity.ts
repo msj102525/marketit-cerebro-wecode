@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Tag } from './tags.entity';
-import { CommonEntity } from 'src/common/entity/common.entity';
+import { CommonEntity } from 'src/common/entities/common.entity';
 import { TagState } from './tagState.entity';
 
 @Entity('tag_type')

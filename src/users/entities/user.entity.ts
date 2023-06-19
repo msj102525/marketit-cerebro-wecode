@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { Team } from '../../teams/entities/team.entity';
-import { CommonEntity } from '../../common/entity/common.entity';
+import { CommonEntity } from '../../common/entities/common.entity';
 
 @Entity()
 export class User extends CommonEntity {
