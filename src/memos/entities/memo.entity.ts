@@ -1,4 +1,4 @@
-import { CommonEntity } from 'src/common/entity/common.entity';
+import { CommonEntity } from 'src/common/entities/common.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { MemoState } from './memoState.entity';
 

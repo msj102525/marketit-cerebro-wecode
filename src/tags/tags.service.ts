@@ -17,6 +17,11 @@ import {
   NotFoundMessage,
 } from 'src/common/exception/not.found.exception';
 import { Exist, ExistMessage } from 'src/common/exception/exsist.exception';
+import { Payload } from 'src/auth/utils/jwtPayload';
+import {
+  UnAuthroizedMessage,
+  Unauthorized,
+} from 'src/common/exception/unauthorized.exception';
 
 @Injectable()
 export class TagsService {
@@ -27,9 +32,7 @@ export class TagsService {
   ) {}
 
   async createTag(tagData: CreateTagDto): Promise<void> {
-    const tagType = await this.tagtyperepo.findOne({
-      where: { tagType: tagData.tagType },
-    });
+    const tagType = await this.tagtyperepo.findOneBy({ id: tagData.tagTypeId });
 
     await this.tagrepo.save({
       tagName: tagData.tagName,
@@ -37,9 +40,17 @@ export class TagsService {
     });
   }
 
-  async getAllTags(): Promise<Tag[]> {
+  async getAllTags(user: Payload): Promise<Tag[]> {
+    const userId: number = user.id;
+
     return await this.tagrepo.find({
       relations: ['tagType', 'tagType.tagState'],
+      where: [
+        { tagType: { tagState: { id: 1 } } }, // tag is public
+        {
+          tagType: { tagState: { id: 2 }, userId }, // tag is private and owned by user
+        },
+      ],
     });
   }
 
@@ -58,7 +69,7 @@ export class TagsService {
 
   async updateTag(tagId: number, tagData: UpdateTagDto): Promise<void> {
     const updateTagType: TagType = await this.tagtyperepo.findOneBy({
-      tagType: tagData.tagType,
+      id: tagData.tagTypeId,
     });
 
     if (!updateTagType) {

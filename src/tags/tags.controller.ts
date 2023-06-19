@@ -20,6 +20,7 @@ import { CreateTagTypeDto } from './dto/create-tag_type.dto';
 import { UpdateTagTypeDto } from './dto/update-tag_type.dto';
 import { JwtAuthGuard } from 'src/auth/utils/jwt.guard';
 import { Request } from 'express';
+import { Tag } from './entities/tags.entity';
 import { Payload } from 'src/auth/utils/jwtPayload';
 
 @Controller('tag')
@@ -33,8 +34,10 @@ export class TagsController {
   }
 
   @Get()
-  async getAllTags() {
-    const tags = await this.tagsService.getAllTags();
+  @UseGuards(JwtAuthGuard)
+  async getAllTags(@Req() request: Request) {
+    const user: Payload = request.user as Payload;
+    const tags: Tag[] = await this.tagsService.getAllTags(user);
     return new ApiResponse(statusMessage.s, HttpStatus.OK, tags);
   }
 
