@@ -22,6 +22,7 @@ import { JwtAuthGuard } from 'src/auth/utils/jwt.guard';
 import { Request } from 'express';
 import { Tag } from './entities/tags.entity';
 import { Payload } from 'src/auth/utils/jwtPayload';
+import { stat } from 'fs';
 
 @Controller('tag')
 export class TagsController {
@@ -59,8 +60,8 @@ export class TagsController {
     return new ApiResponse(statusMessage.s, HttpStatus.OK, result);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('/type')
+  @UseGuards(JwtAuthGuard)
   async createTagType(
     @Body() createTagTypeDto: CreateTagTypeDto,
     @Req() req: Request,
@@ -76,8 +77,19 @@ export class TagsController {
   }
 
   @Get('/type/all')
-  async findAllTagTypesByStatus(@Query('status') status: number) {
-    const tagTypes = await this.tagsService.findAllTagTpyesByStatus(status);
+  @UseGuards(JwtAuthGuard)
+  async findAllTagTypesByStatus(
+    @Query('status') status: number,
+    @Req() req: Request,
+  ) {
+    const user: Payload = req.user as Payload;
+
+    const userId = user.id;
+
+    const tagTypes = await this.tagsService.findAllTagTpyesByStatus(
+      status,
+      userId,
+    );
     return new ApiResponse(statusMessage.s, HttpStatus.OK, tagTypes);
   }
 
