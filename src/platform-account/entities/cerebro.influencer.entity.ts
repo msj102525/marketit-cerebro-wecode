@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { PlatformAccount } from './platform-account/entities/platform.account.entity';
+import { PlatformAccount } from './platform.account.entity';
 
 @Entity()
 export class CerebroInfluencer {

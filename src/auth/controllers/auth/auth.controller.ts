@@ -25,10 +25,6 @@ export class AuthController {
     const email: string = body.email;
     const password: string = body.password;
 
-    if (!name || !email || !password) {
-      throw new HttpException('MISSING KEY', HttpStatus.BAD_REQUEST);
-    }
-
     const result = await this.authService.signUp(name, email, password);
     const user = new SerializedUser(result);
 
@@ -39,10 +35,6 @@ export class AuthController {
   async signIn(@Body() body: LoginUserDto) {
     const name = body.name;
     const password = body.password;
-
-    if (!name || !password) {
-      throw new HttpException('MISSING KEY', HttpStatus.BAD_REQUEST);
-    }
 
     const result = await this.authService.signIn(name, password);
 

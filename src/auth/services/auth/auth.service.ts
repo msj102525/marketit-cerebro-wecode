@@ -4,6 +4,10 @@ import { comparePasswords, encodePassword } from '../../utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../../../users/entities/user.entity';
 import { Payload } from '../../utils/jwtPayload';
+import {
+  Duplicate,
+  DuplicateMessage,
+} from 'src/common/exception/duplicate.exception';
 
 @Injectable()
 export class AuthService {
@@ -13,19 +17,12 @@ export class AuthService {
   ) {}
 
   async signUp(name: string, email: string, password: string) {
-    const userResultByEmail = await this.usersService.findByEmail(email);
-
-    if (userResultByEmail) {
-      throw new HttpException('Email already taken', HttpStatus.BAD_REQUEST);
+    if (await this.usersService.findByEmail(email)) {
+      throw new Duplicate(DuplicateMessage.DUPLICATE_EMAIL);
     }
 
-    const userResultByName = await this.usersService.findByName(name);
-
-    if (userResultByName) {
-      throw new HttpException(
-        'This attribute must be unique',
-        HttpStatus.BAD_REQUEST,
-      );
+    if (await this.usersService.findByName(name)) {
+      throw new Duplicate(DuplicateMessage.DUPLICATE_USER_NAME);
     }
 
     const hashedPassword: string = await encodePassword(password);
@@ -41,7 +38,10 @@ export class AuthService {
     const userResult = await this.usersService.findByName(name);
 
     if (!userResult) {
-      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'WRONG_USERNAME_OR_PASSWORD',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     const comparePassword = await comparePasswords(
@@ -49,14 +49,17 @@ export class AuthService {
       userResult.password,
     );
 
-    if (comparePassword) {
-      let responseData = await this.generateJwt(userResult);
-      responseData['name'] = userResult.name;
-
-      return responseData;
-    } else {
-      throw new HttpException('Could Not Log In', HttpStatus.BAD_REQUEST);
+    if (!comparePassword) {
+      throw new HttpException(
+        'WRONG_USERNAME_OR_PASSWORD',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
+
+    let responseData = await this.generateJwt(userResult);
+    responseData['name'] = userResult.name;
+
+    return responseData;
   }
 
   private async generateJwt(

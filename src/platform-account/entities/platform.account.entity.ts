@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { CommonEntity } from '../../common/entities/common.entity';
-import { CerebroInfluencer } from '../../cerebro.influencer.entity';
+import { CerebroInfluencer } from './cerebro.influencer.entity';
 
 @Entity()
 export class PlatformAccount extends CommonEntity {
