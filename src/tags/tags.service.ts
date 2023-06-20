@@ -22,6 +22,7 @@ import {
   UnAuthroizedMessage,
   Unauthorized,
 } from 'src/common/exception/unauthorized.exception';
+import { SerializedTagType } from 'src/common/serializers/serialized.tagType';
 
 @Injectable()
 export class TagsService {
@@ -142,7 +143,7 @@ export class TagsService {
     return tagTypeResult;
   }
 
-  async findAllTagTpyesByStatus(status: number): Promise<TagType[]> {
+  async findAllTagTpyesByStatus(status: number): Promise<SerializedTagType[]> {
     const tagTypesArray = await this.tagtyperepo.find({
       where: { tagState: Equal(status) },
       relations: ['tagState', 'tag.tagType'],
@@ -155,7 +156,12 @@ export class TagsService {
       throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
     }
 
-    return tagTypesArray;
+    const modifiedTagTypesArray = tagTypesArray.map((tagType) => {
+      const modifiedTags = tagType.tag.map(({ tagType, ...rest }) => rest);
+      return { ...tagType, tag: modifiedTags };
+    });
+
+    return modifiedTagTypesArray;
   }
 
   async updateTagType(
