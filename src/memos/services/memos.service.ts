@@ -6,10 +6,19 @@ import { Repository } from 'typeorm';
 import { MemoStatus } from '../memoState.enum';
 import { UpdateMemoDto } from '../dto/update-memo.dto';
 import { Payload } from 'src/auth/utils/jwtPayload';
+import {
+  NotFound,
+  NotFoundMessage,
+} from 'src/common/exception/not.found.exception';
+import {
+  NoChange,
+  NoChangeMessage,
+} from 'src/common/exception/no.change.exception';
 
 @Injectable()
 export class MemosService {
   constructor(@InjectRepository(Memo) private memoRepo: Repository<Memo>) {}
+
   async createMemo(createMemoDto: CreateMemoDto, user: Payload): Promise<Memo> {
     const { memoContent, influencerPlatformId } = createMemoDto;
     const userId = user['id'];
@@ -37,7 +46,7 @@ export class MemosService {
     });
 
     if (!result) {
-      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+      throw new NotFound(NotFoundMessage.NOT_FOUND_MEMO);
     }
 
     return result;
@@ -52,7 +61,7 @@ export class MemosService {
     });
 
     if (!result) {
-      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+      throw new NotFound(NotFoundMessage.NOT_FOUND_MEMO);
     }
 
     return result;
@@ -68,7 +77,7 @@ export class MemosService {
     const memo = await this.getMemoById(influencerPlatformId, id);
 
     if (userId != memo.userId) {
-      throw new HttpException('Invalid Resource ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ACCESS_DENIED', HttpStatus.FORBIDDEN);
     }
 
     const result = await this.memoRepo.update(memo.id, {
@@ -76,8 +85,7 @@ export class MemosService {
       updatorId: userId,
     });
 
-    if (!result.affected)
-      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+    if (!result.affected) throw new NoChange(NoChangeMessage.NO_UPDATES_MADE);
 
     return result;
   }
@@ -94,8 +102,7 @@ export class MemosService {
       memoState: { id: MemoStatus.INACTIVE },
     });
 
-    if (!result.affected)
-      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+    if (!result.affected) throw new NoChange(NoChangeMessage.NO_DELETES_MADE);
 
     return result;
   }

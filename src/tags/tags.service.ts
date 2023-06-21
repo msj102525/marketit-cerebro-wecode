@@ -16,12 +16,11 @@ import {
   NotFound,
   NotFoundMessage,
 } from 'src/common/exception/not.found.exception';
-import { Exist, ExistMessage } from 'src/common/exception/exsist.exception';
-import { Payload } from 'src/auth/utils/jwtPayload';
 import {
-  UnAuthroizedMessage,
-  Unauthorized,
-} from 'src/common/exception/unauthorized.exception';
+  Duplicate,
+  DuplicateMessage,
+} from 'src/common/exception/duplicate.exception';
+import { Payload } from 'src/auth/utils/jwtPayload';
 import { SerializedTagType } from 'src/common/serializers/serialized.tagType';
 import { TagTypeStatus } from 'src/common/response/tagType.status.enum';
 
@@ -128,7 +127,7 @@ export class TagsService {
     const tagTypeFind = await this.isExistTagTypeByCreatedDto(createTagTypeDto);
 
     if (tagTypeFind) {
-      throw new Exist(ExistMessage.ALREADY_EXIST);
+      throw new Duplicate(DuplicateMessage.DUPLICATE_TAG_TYPE);
     }
 
     await this.tagtyperepo.save({
