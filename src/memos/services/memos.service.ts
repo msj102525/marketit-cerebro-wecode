@@ -25,7 +25,7 @@ export class MemosService {
 
     const result = await this.memoRepo.create({
       memoContent: memoContent,
-      influencerPlatformId: influencerPlatformId,
+      influencerPlatformId: { id: influencerPlatformId },
       memoState: { id: MemoStatus.ACTIVE },
       userId: userId,
       creatorId: userId,
@@ -38,7 +38,7 @@ export class MemosService {
     const result = await this.memoRepo.find({
       where: {
         memoState: { id: MemoStatus.ACTIVE },
-        influencerPlatformId: influencerPlatformId,
+        influencerPlatformId: { id: influencerPlatformId },
       },
       order: {
         createdAt: 'DESC',
@@ -56,7 +56,7 @@ export class MemosService {
     const result = await this.memoRepo.findOne({
       where: {
         id: id,
-        influencerPlatformId: influencerPlatformId,
+        influencerPlatformId: { id: influencerPlatformId },
       },
     });
 
