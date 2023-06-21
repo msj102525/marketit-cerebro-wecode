@@ -18,6 +18,7 @@ import {
 import { Payload } from 'src/auth/utils/jwtPayload';
 import { SerializedTagType } from 'src/common/serializers/serialized.tagType';
 import { TagTypeStatus } from 'src/common/response/tagType.status.enum';
+import { stat } from 'fs';
 
 @Injectable()
 export class TagsService {
@@ -110,11 +111,28 @@ export class TagsService {
     status: number,
     userId: number,
   ): Promise<SerializedTagType[]> {
-    const tagTypesArray = await this.findAllTagTypeByStatusUserId(
-      status,
-      userId,
-    );
-    return tagTypesArray;
+    let whereCondition;
+
+    if (status == TagTypeStatus.Private) {
+      whereCondition = { tagState: { id: status }, userId: userId };
+    }
+    if (status == TagTypeStatus.Public) {
+      whereCondition = { tagState: { id: status } };
+    }
+
+    const tagTypesArray = await this.tagtyperepo.find({
+      where: whereCondition,
+      relations: ['tagState', 'tag.tagType'],
+      order: {
+        id: 'ASC',
+        tag: { tagId: 'ASC' },
+      },
+    });
+    const modifiedTagTypesArray = tagTypesArray.map((tagType) => {
+      const modifiedTags = tagType.tag.map(({ tagType, ...rest }) => rest);
+      return { ...tagType, tag: modifiedTags };
+    });
+    return modifiedTagTypesArray;
   }
 
   async updateTagType(
@@ -137,34 +155,6 @@ export class TagsService {
     await this.tagtyperepo.remove(tagTypeFindById);
 
     return `This action removes a tagTypeId: ${id}`;
-  }
-
-  private async findAllTagTypeByStatusUserId(
-    status: number,
-    userId?: number,
-  ): Promise<SerializedTagType[]> {
-    const whereCondition: any = {
-      tagState: Equal(status),
-    };
-
-    if (status == TagTypeStatus.Private) {
-      whereCondition.userId = Equal(userId);
-    }
-
-    const tagTypesArray = await this.tagtyperepo.find({
-      where: whereCondition,
-      relations: ['tagState', 'tag.tagType'],
-      order: {
-        tag: { tagId: 'ASC' },
-      },
-    });
-
-    const modifiedTagTypesArray = tagTypesArray.map((tagType) => {
-      const modifiedTags = tagType.tag.map(({ tagType, ...rest }) => rest);
-      return { ...tagType, tag: modifiedTags };
-    });
-
-    return modifiedTagTypesArray;
   }
 
   private async getTagTypeById(tagTypeId: number) {
