@@ -16,6 +16,8 @@ import { PlatformAccount } from './platform-account/entities/platform.account.en
 import { PlatformAccountController } from './platform-account/controllers/platform.account.controller';
 import { PlatformAccountService } from './platform-account/services/platform.account.service';
 import { MemosModule } from './memos/memos.module';
+import { InflcaUserModule } from './inflca-user/inflca-user.module';
+import { PlatformAccountChangeLogModule } from './platform-account-change-log/platform-account-change-log.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { MemosModule } from './memos/memos.module';
     AuthModule,
     TagsModule,
     MemosModule,
+    InflcaUserModule,
+    PlatformAccountChangeLogModule,
   ],
   controllers: [
     AppController,
