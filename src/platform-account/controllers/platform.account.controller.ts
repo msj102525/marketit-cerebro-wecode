@@ -9,7 +9,7 @@ import {
 import { PlatformAccountService } from '../services/platform.account.service';
 import { SerializedPlatformAccount } from '../serializers/platform.account.serializer';
 import { ApiResponse } from '../../common/response/api.response';
-import { statusMessage } from '../../common/response/status.message.enum';
+import { statusMessage } from '../../common/enums/status.message.enum';
 
 @Controller('platform')
 export class PlatformAccountController {

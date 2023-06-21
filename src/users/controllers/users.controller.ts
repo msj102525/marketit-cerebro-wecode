@@ -12,7 +12,7 @@ import {
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dtos/create.user.dto';
 import { ApiResponse } from 'src/common/response/api.response';
-import { statusMessage } from '../../common/response/status.message.enum';
+import { statusMessage } from '../../common/enums/status.message.enum';
 
 @Controller('users')
 export class UsersController {

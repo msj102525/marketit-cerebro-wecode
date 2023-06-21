@@ -1,4 +1,4 @@
-import { statusMessage } from './../../../common/response/status.message.enum';
+import { statusMessage } from '../../../common/enums/status.message.enum';
 import {
   Body,
   Controller,

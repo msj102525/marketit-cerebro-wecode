@@ -12,7 +12,7 @@ import { TeamsService } from '../services/teams.service';
 import { CreateTeamDto } from '../dtos/create.team.dto';
 import { UpdateTeamDto } from '../dtos/update.team.dto';
 import { ApiResponse } from 'src/common/response/api.response';
-import { statusMessage } from '../../common/response/status.message.enum';
+import { statusMessage } from '../../common/enums/status.message.enum';
 
 @Controller('teams')
 export class TeamsController {
