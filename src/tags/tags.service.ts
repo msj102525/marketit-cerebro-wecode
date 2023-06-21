@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, FindOneOptions, Repository } from 'typeorm';
 import { Tag } from './entities/tags.entity';
@@ -27,13 +22,14 @@ import { TagTypeStatus } from 'src/common/response/tagType.status.enum';
 @Injectable()
 export class TagsService {
   constructor(
-    @InjectRepository(Tag) private readonly tagrepo: Repository<Tag>,
+    @InjectRepository(Tag)
+    private readonly tagrepo: Repository<Tag>,
     @InjectRepository(TagType)
     private readonly tagtyperepo: Repository<TagType>,
   ) {}
 
   async createTag(tagData: CreateTagDto): Promise<void> {
-    const tagType = await this.tagtyperepo.findOneBy({ id: tagData.tagTypeId });
+    const tagType = await this.getTagTypeById(tagData.tagTypeId);
 
     await this.tagrepo.save({
       tagName: tagData.tagName,
@@ -69,58 +65,25 @@ export class TagsService {
   }
 
   async updateTag(tagId: number, tagData: UpdateTagDto): Promise<void> {
-    const updateTagType: TagType = await this.tagtyperepo.findOneBy({
-      id: tagData.tagTypeId,
-    });
+    await this.getTagById(tagId);
 
-    if (!updateTagType) {
-      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
-    }
+    const tagType: TagType = await this.getTagTypeById(tagData.tagTypeId);
 
     await this.tagrepo.update(
       { tagId },
       {
         tagName: tagData.tagName,
-        tagType: updateTagType,
+        tagType: tagType,
       },
     );
   }
 
   async deleteTag(tagId: number): Promise<void> {
-    const tag: Tag = await this.tagrepo.findOneBy({ tagId });
+    const result = await this.tagrepo.delete(tagId);
 
-    if (!tag) {
+    if (!result.affected) {
       throw new NotFound(NotFoundMessage.NOT_FOUND_TAG);
     }
-
-    await this.tagrepo.delete(tagId);
-  }
-
-  async isExistTagTypeById(option: FindOneOptions<TagType>): Promise<TagType> {
-    const tagTypeFindById = await this.tagtyperepo.findOne(option);
-
-    if (!tagTypeFindById) {
-      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
-    }
-
-    return tagTypeFindById;
-  }
-
-  async isExistTagTypeByCreatedDto(
-    createTagTypeDto: CreateTagTypeDto,
-  ): Promise<TagType> {
-    const { tagType, tagState, userId } = createTagTypeDto;
-
-    const tagTypeFind: TagType | undefined = await this.tagtyperepo.findOne({
-      relations: ['tagState'],
-      where: {
-        tagState: Equal(tagState),
-        tagType: tagType,
-        userId: userId,
-      },
-    });
-
-    return tagTypeFind;
   }
 
   async createTagType(createTagTypeDto: CreateTagTypeDto): Promise<TagType> {
@@ -202,5 +165,46 @@ export class TagsService {
     });
 
     return modifiedTagTypesArray;
+  }
+
+  private async getTagTypeById(tagTypeId: number) {
+    const tagType: TagType = await this.tagtyperepo.findOne({
+      where: { id: tagTypeId },
+    });
+
+    if (!tagType) {
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+    }
+
+    return tagType;
+  }
+
+  private async isExistTagTypeById(
+    option: FindOneOptions<TagType>,
+  ): Promise<TagType> {
+    const tagTypeFindById = await this.tagtyperepo.findOne(option);
+
+    if (!tagTypeFindById) {
+      throw new NotFound(NotFoundMessage.NOT_FOUND_TAG_TYPE);
+    }
+
+    return tagTypeFindById;
+  }
+
+  private async isExistTagTypeByCreatedDto(
+    createTagTypeDto: CreateTagTypeDto,
+  ): Promise<TagType> {
+    const { tagType, tagState, userId } = createTagTypeDto;
+
+    const tagTypeFind: TagType | undefined = await this.tagtyperepo.findOne({
+      relations: ['tagState'],
+      where: {
+        tagState: Equal(tagState),
+        tagType: tagType,
+        userId: userId,
+      },
+    });
+
+    return tagTypeFind;
   }
 }
