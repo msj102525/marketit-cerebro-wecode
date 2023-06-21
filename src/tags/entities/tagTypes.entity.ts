@@ -11,7 +11,7 @@ export class TagType extends CommonEntity {
   @Column({ name: 'user_id' })
   userId: number;
 
-  @OneToMany(() => Tag, (tag) => tag.tagType)
+  @OneToMany(() => Tag, (tag) => tag.tagType, { cascade: true })
   tag: Tag[];
 
   @ManyToOne(() => TagState, (tagState) => tagState.tagType)
