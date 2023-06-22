@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Inject,
   Post,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AuthService } from '../../services/auth/auth.service';
 import { CreateUserDto } from '../../../users/dtos/create.user.dto';
@@ -19,6 +21,7 @@ export class AuthController {
     @Inject('AUTH_SERVICE') private readonly authService: AuthService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('sign-up')
   async signUp(@Body() body: CreateUserDto) {
     const name: string = body.name;
