@@ -44,6 +44,7 @@ describe('TagsService', () => {
       jest
         .spyOn(tagtyperepo, 'findOne')
         .mockImplementation(async () => mockTagType);
+      jest.spyOn(tagrepo, 'findOne').mockResolvedValue(null);
       jest.spyOn(tagrepo, 'save').mockResolvedValue(undefined);
 
       const result = await service.createTag(createTagDto);
