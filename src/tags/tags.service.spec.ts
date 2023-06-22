@@ -64,10 +64,7 @@ describe('TagsService', () => {
         email: 'test@test.com',
       };
 
-      const mockTags: Tag[] = [
-        { tagId: 1, tagName: 'tagName', tagType: new TagType() },
-        { tagId: 2, tagName: 'tagName2', tagType: new TagType() },
-      ];
+      const mockTags = [new Tag(), new Tag()];
 
       jest.spyOn(tagrepo, 'find').mockResolvedValue(mockTags);
 
