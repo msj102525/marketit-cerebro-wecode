@@ -30,6 +30,11 @@ export class TagsService {
 
   async createTag(tagData: CreateTagDto): Promise<void> {
     const tagType = await this.getTagTypeById(tagData.tagTypeId);
+    const tag = await this.getTagByName(tagData.tagName);
+
+    if (tag) {
+      throw new Duplicate(DuplicateMessage.DUPLICATE_TAG_NAME);
+    }
 
     await this.tagrepo.save({
       tagName: tagData.tagName,
@@ -206,5 +211,12 @@ export class TagsService {
     });
 
     return tagTypeFind;
+  }
+
+  private async getTagByName(tagName: string): Promise<Tag> {
+    return await this.tagrepo.findOne({
+      relations: ['tagType', 'tagType.tagState'],
+      where: { tagName },
+    });
   }
 }
