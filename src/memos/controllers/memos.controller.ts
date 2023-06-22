@@ -14,7 +14,7 @@ import { MemosService } from '../services/memos.service';
 import { CreateMemoDto } from '../dto/create-memo.dto';
 import { UpdateMemoDto } from '../dto/update-memo.dto';
 import { ApiResponse } from 'src/common/response/api.response';
-import { statusMessage } from 'src/common/response/status.message.enum';
+import { statusMessage } from '../../common/enums/status.message.enum';
 import { JwtAuthGuard } from 'src/auth/utils/jwt.guard';
 import { Request } from 'express';
 import { Payload } from 'src/auth/utils/jwtPayload';

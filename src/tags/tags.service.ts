@@ -17,8 +17,7 @@ import {
 } from 'src/common/exception/duplicate.exception';
 import { Payload } from 'src/auth/utils/jwtPayload';
 import { SerializedTagType } from 'src/common/serializers/serialized.tagType';
-import { TagTypeStatus } from 'src/common/response/tagType.status.enum';
-import { stat } from 'fs';
+import { TagTypeStatus } from '../common/enums/tagType.status.enum';
 
 @Injectable()
 export class TagsService {

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { ApiResponse } from 'src/common/response/api.response';
-import { statusMessage } from 'src/common/response/status.message.enum';
+import { statusMessage } from '../common/enums/status.message.enum';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { CreateTagTypeDto } from './dto/create-tag_type.dto';
